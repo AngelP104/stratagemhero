@@ -1,9 +1,23 @@
 import { useLayoutEffect, useState, useCallback } from "react";
 
+import useSound from "use-sound";
+
+import fail from '../sounds/fail.wav';
+import tap1 from '../sounds/tap1.wav';
+import tap2 from '../sounds/tap2.wav';
+import tap3 from '../sounds/tap3.wav';
+import tap4 from '../sounds/tap4.wav';
 
 export const InputArrows = ({ code, onComplete }) => {
   const [arrows, setArrows] = useState([]);
   const [currentInput, setCurrentInput] = useState('');
+  const [isError, setIsError] = useState(false);
+  const [inputBlocked, setInputBlocked] = useState(false);
+  const [playTap1] = useSound(tap1, { preload: true });
+  const [playTap2] = useSound(tap2, { preload: true });
+  const [playTap3] = useSound(tap3, { preload: true });
+  const [playTap4] = useSound(tap4, { preload: true });
+  const [playFail] = useSound(fail, { preload: true });
   
   // Cuando cambia el código, reiniciar el input y mostrar las flechas
   useLayoutEffect(() => {
@@ -12,6 +26,16 @@ export const InputArrows = ({ code, onComplete }) => {
       setCurrentInput('');
     }
   }, [code]);
+
+    const getArrowSymbol = (direction) => {
+    switch (direction) {
+      case 'w': return 'fa-sharp fa-solid fa-up';
+      case 's': return 'fa-sharp fa-solid fa-down';
+      case 'd': return 'fa-sharp fa-solid fa-right';
+      case 'a': return 'fa-sharp fa-solid fa-left';
+      default: return direction;
+    }
+  }
 
   // Mostrar las flechas basadas en el código
   const showArrows = () => {
@@ -28,22 +52,28 @@ export const InputArrows = ({ code, onComplete }) => {
       case 'w':
       case 'arrowup':
         pressedKey = 'w';
+        playTap1();
         break;
       case 's':
       case 'arrowdown':
         pressedKey = 's';
+        playTap2();
         break;
       case 'd':
       case 'arrowright':
         pressedKey = 'd';
+        playTap3();
         break;
       case 'a':
       case 'arrowleft':
         pressedKey = 'a';
+        playTap4();
         break;
       default:
         return;
     }
+
+    if (inputBlocked) return;
 
     setCurrentInput(prev => {
       const newInput = prev + pressedKey;
@@ -53,13 +83,22 @@ export const InputArrows = ({ code, onComplete }) => {
         // Si la secuencia está completa
         if (newInput === code) {
           onComplete();
-          //console.log("estratagema completa");
           return '';
         }
         return newInput;
       }
 
-      // Si la secuencia es incorrecta, reiniciar
+      // Si la secuencia es incorrecta
+      playFail();
+      setIsError(true);
+      setInputBlocked(true);
+      
+      // Bloquear input por 500ms
+      setTimeout(() => {
+        setIsError(false);
+        setInputBlocked(false);
+      }, 500);
+      
       return '';
     });
 
@@ -74,15 +113,7 @@ export const InputArrows = ({ code, onComplete }) => {
     };
   }, [handleKeyPress]);
 
-  const getArrowSymbol = (direction) => {
-    switch (direction) {
-      case 'w': return '/arrows/arrow_W.png';
-      case 's': return '/arrows/arrow_S.png';
-      case 'd': return '/arrows/arrow_D.png';
-      case 'a': return '/arrows/arrow_A.png';
-      default: return direction;
-    }
-  }
+
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -90,16 +121,12 @@ export const InputArrows = ({ code, onComplete }) => {
         {arrows.map((direction, index) => (
           <span
             key={index}
-            className={`select-none transition- ${
-              index < currentInput.length ? 'opacity-100' : 'opacity-50'
+            className={`select-none transition-all duration-150 ${
+              isError ? 'text-[#ff2727]' :
+              index < currentInput.length ? 'opacity-100 text-yellow-400' : 'opacity-50'
             }`}
           >
-            <img 
-              src={getArrowSymbol(direction)}  
-              alt=""
-              draggable="false"
-              className="w-12 h-12 object-contain"
-            />
+            <i className={`text-6xl ml-1 ${getArrowSymbol(direction)}`}></i>
           </span>
         ))}
       </div>
