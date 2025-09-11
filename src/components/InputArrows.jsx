@@ -7,27 +7,33 @@ import tap1 from '../sounds/tap1.wav';
 import tap2 from '../sounds/tap2.wav';
 import tap3 from '../sounds/tap3.wav';
 import tap4 from '../sounds/tap4.wav';
+import stratComplete from '../sounds/stratComplete.wav';
 
-export const InputArrows = ({ code, onComplete }) => {
+export const InputArrows = ({ code, onComplete, fallos }) => {
   const [arrows, setArrows] = useState([]);
   const [currentInput, setCurrentInput] = useState('');
   const [isError, setIsError] = useState(false);
   const [inputBlocked, setInputBlocked] = useState(false);
+
   const [playTap1] = useSound(tap1, { preload: true });
   const [playTap2] = useSound(tap2, { preload: true });
   const [playTap3] = useSound(tap3, { preload: true });
   const [playTap4] = useSound(tap4, { preload: true });
   const [playFail] = useSound(fail, { preload: true });
-  
+  const [playStratComplete] = useSound(stratComplete, { preload: true, volume: 0.5 });
+
   // Cuando cambia el código, reiniciar el input y mostrar las flechas
   useLayoutEffect(() => {
     if (code) {
       showArrows();
       setCurrentInput('');
+      setIsError(false);
+      setInputBlocked(false);
+
     }
   }, [code]);
 
-    const getArrowSymbol = (direction) => {
+  const getArrowSymbol = (direction) => {
     switch (direction) {
       case 'w': return 'fa-sharp fa-solid fa-up';
       case 's': return 'fa-sharp fa-solid fa-down';
@@ -46,6 +52,8 @@ export const InputArrows = ({ code, onComplete }) => {
   // Manejar la pulsación de teclas
   const handleKeyPress = useCallback((event) => {
     let pressedKey = '';
+
+    if (inputBlocked) return;
 
     // Mapear teclas a direcciones
     switch (event.key.toLowerCase()) {
@@ -73,7 +81,6 @@ export const InputArrows = ({ code, onComplete }) => {
         return;
     }
 
-    if (inputBlocked) return;
 
     setCurrentInput(prev => {
       const newInput = prev + pressedKey;
@@ -83,6 +90,8 @@ export const InputArrows = ({ code, onComplete }) => {
         // Si la secuencia está completa
         if (newInput === code) {
           onComplete();
+          playStratComplete();
+
           return '';
         }
         return newInput;
@@ -92,13 +101,15 @@ export const InputArrows = ({ code, onComplete }) => {
       playFail();
       setIsError(true);
       setInputBlocked(true);
-      
+      fallos += 1;
+
       // Bloquear input por 500ms
+      //TODO: MAYBE SE QUITARÁ ESTA FUNCIONALIDAD
       setTimeout(() => {
         setIsError(false);
         setInputBlocked(false);
       }, 500);
-      
+
       return '';
     });
 
@@ -121,10 +132,9 @@ export const InputArrows = ({ code, onComplete }) => {
         {arrows.map((direction, index) => (
           <span
             key={index}
-            className={`select-none transition-all duration-150 ${
-              isError ? 'text-[#ff2727]' :
-              index < currentInput.length ? 'opacity-100 text-yellow-400' : 'opacity-50'
-            }`}
+            className={`select-none transition-all duration-150 ${isError ? 'text-[#ff2727]' :
+                index < currentInput.length ? 'opacity-100 text-yellow-400' : 'opacity-50'
+              }`}
           >
             <i className={`text-6xl ml-1 ${getArrowSymbol(direction)}`}></i>
           </span>

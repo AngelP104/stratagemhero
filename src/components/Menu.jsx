@@ -29,7 +29,7 @@ export const Menu = () => {
           </>
         ) : (
           <>
-            <Game showMenu={setShowMenu} music={stop} />
+            <Game showMenu={setShowMenu} stopMusic={stop} playMusic={playMusic}/>
           </>
         )}
       </main>
