@@ -28,7 +28,7 @@ export const InputArrows = ({ code, onComplete, onFail }) => {
       showArrows();
       setCurrentInput('');
       setIsError(false);
-      setInputBlocked(false);
+      //setInputBlocked(false);
 
     }
   }, [code]);
@@ -53,7 +53,7 @@ export const InputArrows = ({ code, onComplete, onFail }) => {
   const handleKeyPress = useCallback((event) => {
     let pressedKey = '';
 
-    if (inputBlocked) return;
+    //if (inputBlocked) return;
 
     // Mapear teclas a direcciones
     switch (event.key.toLowerCase()) {
@@ -100,15 +100,14 @@ export const InputArrows = ({ code, onComplete, onFail }) => {
       // Si la secuencia es incorrecta
       playFail();
       setIsError(true);
-      setInputBlocked(true);
+      //setInputBlocked(true);
       onFail && onFail();
 
-      // Bloquear input por 500ms
-      //TODO: MAYBE SE QUITARÁ ESTA FUNCIONALIDAD
+      // Input en rojo
       setTimeout(() => {
         setIsError(false);
         setInputBlocked(false);
-      }, 500);
+      }, 200);
 
       return '';
     });
@@ -132,7 +131,7 @@ export const InputArrows = ({ code, onComplete, onFail }) => {
         {arrows.map((direction, index) => (
           <span
             key={index}
-            className={`select-none transition-all duration-150 ${isError ? 'text-[#ff2727]' :
+            className={`select-none duration-50 ${isError ? 'text-[#ff2d2d]' :
                 index < currentInput.length ? 'opacity-100 text-yellow-400' : 'opacity-50'
               }`}
           >

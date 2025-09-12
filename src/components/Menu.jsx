@@ -57,7 +57,8 @@ const [highscore, setHighscore] = useState(() => {
 
   return (
     <>
-      <main className='bg-neutral-900 text-white min-h-screen flex flex-col justify-center items-center w-full'>
+    <main>
+      <div className='bg-neutral-900 text-white min-h-screen flex flex-col justify-center items-center w-full'>
         {showMenu ? (
           <>
             {/* Botón de música en el menú */}
@@ -70,10 +71,10 @@ const [highscore, setHighscore] = useState(() => {
 
             <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-50">
 
-              <a href="https://github.com/AngelP104" target='_blank'><i class="fa-brands fa-github mr-2"></i>My GitHub</a>
+              <a href="https://github.com/AngelP104" target='_blank'><i className="fa-brands fa-github mr-2"></i>My GitHub</a>
             </div>
 
-            <div className=''>
+            <div>
               <h1 className='text-5xl'>Stratagem Hero</h1>
               <p className='opacity-70'>Inspired on Helldivers 2</p>
               <br />
@@ -89,6 +90,7 @@ const [highscore, setHighscore] = useState(() => {
             <Game showMenu={setShowMenu} stopMusic={stop} playMusic={playMusic} musicEnabled={musicEnabled} highscore={highscore} setHighscore={setHighscore} />
           </>
         )}
+      </div>
       </main>
     </>
   )

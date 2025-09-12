@@ -31,7 +31,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
   const [playStart] = useSound(start, { preload: true });
 
   //Timer
-  const timer = 10; // tiempo con el que empieza cada ronda, en segundos
+  const [timer, setTimer] = useState(10); // tiempo con el que empieza cada ronda, en segundos
   const [currentTime, setCurrentTime] = useState(timer); // tiempo actual del temporizador
   const intervalRef = useRef(null);
   const firstRoundRef = useRef(true);
@@ -50,7 +50,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
   // Calcular score de la ronda y actualizar
   const endRoundScore = () => {
     const scoreRoundBonus = 75 + ((roundNumber + 1) * 25);
-    const scoreTimeBonus = Math.floor(currentTime) * 10 + Math.floor((currentTime % 1) * 10);
+    const scoreTimeBonus = Math.floor((currentTime / timer) * 100);
     const scorePerfectRound = fallos === 0 ? 100 : 0;
 
     const roundScore = scoreRoundBonus + scoreTimeBonus + scorePerfectRound;
@@ -87,7 +87,13 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
       tempStratagems.splice(randomIndex, 1);
     }
     setCurrentStratagems(selectedStratagems); // Actualizar las estratagemas actuales
-    setCurrentTime(timer); // Reiniciar el temporizador
+
+
+    setTimer(prev => {
+      const newTimer = prev > 4 ? prev - 0.7 : prev;
+      setCurrentTime(Number(newTimer.toFixed(2))); // reinicia el tiempo al máximo exacto
+      return newTimer;
+    });
   }
 
   //Añade segundos sin pasarse del límite
@@ -132,7 +138,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
   const onCompletedStratagem = () => {
     setCurrentStratagems(prev => {
       const remaining = prev.slice(1);
-      addSecondsToTimer(1);
+      addSecondsToTimer(0.5);
       setScore(prev => prev + (currentStratagems[0].code.length * 5)); //+5 score por flecha en estratagema completada
 
       // Si no quedan más estratagemas, iniciar nueva ronda
@@ -147,7 +153,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
   const exitGame = () => {
     const newHighscore = Math.max(score, highscore);
     setHighscore(newHighscore);
-    localStorage.setItem("highscore",newHighscore);
+    localStorage.setItem("highscore", newHighscore);
     stopMusic();
     showMenu(true);
     playGameLost();
@@ -182,7 +188,8 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
 
 
   return (
-    <div className="game-container w-full">
+
+    <div className="game-container w-[1000px]">
 
       {isTransition ? (
         <>
@@ -190,7 +197,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
             <p className="text-2xl">Get ready for Round {roundNumber + 2}</p>
             <div className="text-right">
               {transitionStep >= 1 && <p>Round bonus <span className="text-yellow-400">{lastRoundStats.scoreRoundBonus}</span></p>}
-              {transitionStep >= 2 && <p>Time Bonus <span className="text-yellow-400">{lastRoundStats.scoreTimeBonus}</span></p>}
+              {transitionStep >= 2 && <p>Time bonus <span className="text-yellow-400">{lastRoundStats.scoreTimeBonus}</span></p>}
               {transitionStep >= 3 && <><p>Perfect round <span className="text-yellow-400">{lastRoundStats.scorePerfectRound}</span></p>
                 <br />
                 <p> TOTAL  <span className="text-yellow-400">{score}</span></p>
@@ -202,7 +209,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
       ) : (
         <>
 
-          <div className="flex justify-between items-center mb-4 mx-4">
+          <div className="flex justify-between items-center mb-4">
             <h2 className="text-4xl">Round {roundNumber + 1}</h2>
             <div className="text-right">
 
@@ -248,7 +255,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
                     onFail={() => setFallos(prev => prev + 1)}
                   />
                 </div>
-                <div className="w-full h-4 bg-neutral-700 mt-4">
+                <div className="h-4 bg-neutral-700 mt-4 overflow-hidden w-full">
                   <div
                     className="h-4 bg-yellow-400 transition-all duration-100"
                     style={{ width: `${(currentTime / timer) * 100}%` }}
