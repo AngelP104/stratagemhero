@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useLayoutEffect, useRef, useEffect } from 'react';
 import { Game } from './Game';
 
 import useSound from 'use-sound';
@@ -6,30 +6,87 @@ import loopSong from '../sounds/loop.mp3';
 
 export const Menu = () => {
   const [showMenu, setShowMenu] = useState(true);
-  const [playMusic, { stop }] = useSound(loopSong, {loop: true, volume: 0.5});
+  const [playMusic, { stop }] = useSound(loopSong, { loop: true, volume: 0.5 });
+  const [musicEnabled, setMusicEnabled] = useState(localStorage.getItem("music") || "on");
+
+  const musicEnabledRef = useRef(musicEnabled);
+  musicEnabledRef.current = musicEnabled; // actualizar en cada render
+
+const [highscore, setHighscore] = useState(() => {
+  const saved = localStorage.getItem("highscore");
+  return saved ? parseInt(saved) : 0; // si no hay valor, inicializa en 0
+});
+
+  const toggleMusic = () => {
+    const newValue = musicEnabled === "on" ? "off" : "on";
+    setMusicEnabled(newValue);
+    localStorage.setItem("music", newValue);
+  }
 
   const startGame = () => {
     setShowMenu(false);
-    playMusic();
+    //if (musicEnabledRef.current === "on") playMusic();
     //console.log("Game started");
   }
+
+  // Manejar la pulsación de teclas
+  const handleKeyPress = useCallback((event) => {
+    const key = event.key.toLowerCase();
+    if (!showMenu) return;
+
+    //Toggle music
+    if (key === 'm') {
+      toggleMusic();
+      event.preventDefault();
+
+      //Start Game
+    } else if (key === 'enter' || key === ' ') {
+      startGame();
+      event.preventDefault();
+    }
+  }, [showMenu, musicEnabled]);
+
+  // Añadir y remover el event listener
+  useLayoutEffect(() => {
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
 
   return (
     <>
       <main className='bg-neutral-900 text-white min-h-screen flex flex-col justify-center items-center w-full'>
         {showMenu ? (
           <>
+            {/* Botón de música en el menú */}
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+              <button onClick={toggleMusic}>
+                <i className={`fa-sharp fa-solid ${musicEnabled === "on" ? "fa-volume" : "fa-volume-slash"} text-2xl`}></i>
+              </button>
+              <p className="text-neutral-400 mr-1">[M] Music</p>
+            </div>
+
+            <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-50">
+
+              <a href="https://github.com/AngelP104" target='_blank'><i class="fa-brands fa-github mr-2"></i>My GitHub</a>
+            </div>
+
             <div className=''>
               <h1 className='text-5xl'>Stratagem Hero</h1>
+              <p className='opacity-70'>Inspired on Helldivers 2</p>
+              <br />
               <div>
-                <p className='text-xl'>Press start!</p>
-                <button onClick={startGame} className='font-bold text-2xl border-2 p-2 mt-2 hover:bg-neutral-700 hover:border-yellow-300'>Start game</button>
+                <p className='text-2xl'>HIGHSCORE: <span className="text-yellow-400">{highscore || "0"}</span></p>
+                <button onClick={startGame} className='text-3xl border-2 p-2 mt-2 hover:bg-neutral-700 hover:border-yellow-300 w-full'>Start game</button>
+                <p className="text-neutral-400 text-center">[Enter] [Spacebar]</p>
               </div>
             </div>
           </>
         ) : (
           <>
-            <Game showMenu={setShowMenu} stopMusic={stop} playMusic={playMusic}/>
+            <Game showMenu={setShowMenu} stopMusic={stop} playMusic={playMusic} musicEnabled={musicEnabled} highscore={highscore} setHighscore={setHighscore} />
           </>
         )}
       </main>

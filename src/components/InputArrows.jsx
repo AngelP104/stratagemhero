@@ -9,7 +9,7 @@ import tap3 from '../sounds/tap3.wav';
 import tap4 from '../sounds/tap4.wav';
 import stratComplete from '../sounds/stratComplete.wav';
 
-export const InputArrows = ({ code, onComplete, fallos }) => {
+export const InputArrows = ({ code, onComplete, onFail }) => {
   const [arrows, setArrows] = useState([]);
   const [currentInput, setCurrentInput] = useState('');
   const [isError, setIsError] = useState(false);
@@ -101,7 +101,7 @@ export const InputArrows = ({ code, onComplete, fallos }) => {
       playFail();
       setIsError(true);
       setInputBlocked(true);
-      fallos += 1;
+      onFail && onFail();
 
       // Bloquear input por 500ms
       //TODO: MAYBE SE QUITARÁ ESTA FUNCIONALIDAD

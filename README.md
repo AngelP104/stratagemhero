@@ -1,5 +1,5 @@
 # Stratagem Hero
 
-Minigame from the videogame Helldivers 2 From ArrowHead, Stratagem Hero.
+Minigame from the videogame Helldivers 2: Stratagem Hero.
 
-Only stratagems and round logic.
+Featuring random stratagem rounds, dynamic score and local highscore.
