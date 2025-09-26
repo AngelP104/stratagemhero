@@ -45,6 +45,10 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
   const [score, setScore] = useState(0);
   const [fallos, setFallos] = useState(0);
 
+  //Game Over Screen
+  const [gameOver, setGameOver] = useState(false);
+  const [isNewHighscore, setIsNewHighscore] = useState(false);
+
   //TODO: timer por pantalla
 
   // Calcular score de la ronda y actualizar
@@ -151,13 +155,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
 
 
   const exitGame = () => {
-    const newHighscore = Math.max(score, highscore);
-    setHighscore(newHighscore);
-    localStorage.setItem("highscore", newHighscore);
-    stopMusic();
     showMenu(true);
-    playGameLost();
-
   }
 
   const timerGoesDown = () => {
@@ -167,7 +165,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
       setCurrentTime(prev => {
         if (prev <= 0.1) {  // ya se acabó el tiempo
           clearInterval(intervalRef.current);
-          exitGame();
+          gameOverScreen();
           return 0;
         }
         return +(prev - 0.1).toFixed(1); // evitar acumulación de decimales
@@ -177,6 +175,25 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
     return () => clearInterval(intervalRef);
   }
 
+  const gameOverScreen = () => {
+    const newHighscore = Math.max(score, highscore);
+    if (newHighscore > highscore) setIsNewHighscore(true);
+
+    setHighscore(newHighscore);
+    localStorage.setItem("highscore", newHighscore);
+
+    setGameOver(true);
+    stopMusic();
+    playGameLost();
+    //console.log("Game Over ON");
+
+    setTimeout(() => {
+      setGameOver(false);
+      //console.log("Game Over OFF");
+      setIsNewHighscore(false);
+      exitGame();
+    }, 4500);
+  }
 
   // Iniciar nueva ronda al montar el componente y al cambiar el número de ronda
   useEffect(() => {
@@ -190,82 +207,91 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
   return (
 
     <div className="game-container w-[1000px]">
-
-      {isTransition ? (
+      {gameOver ? (
         <>
-          <div className="flex flex-col items-center text-right justify-center h-full text-4xl">
-            <p className="text-2xl">Get ready for Round {roundNumber + 2}</p>
-            <div className="text-right">
-              {transitionStep >= 1 && <p>Round bonus <span className="text-yellow-400">{lastRoundStats.scoreRoundBonus}</span></p>}
-              {transitionStep >= 2 && <p>Time bonus <span className="text-yellow-400">{lastRoundStats.scoreTimeBonus}</span></p>}
-              {transitionStep >= 3 && <><p>Perfect round <span className="text-yellow-400">{lastRoundStats.scorePerfectRound}</span></p>
-                <br />
-                <p> TOTAL  <span className="text-yellow-400">{score}</span></p>
-              </>
-              }
-            </div>
+          <div className="text-center">
+            <h2 className="text-5xl">Game Over!</h2>
+            <p className="text-4xl">Final Score: <span className="text-yellow-400">{score}</span></p>
+            <br />
+            {isNewHighscore && <p className="text-3xl text-yellow-400 animate-pulse">New Highscore!</p>}
           </div>
         </>
       ) : (
-        <>
-
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-4xl">Round {roundNumber + 1}</h2>
-            <div className="text-right">
-
-              <h2 className="text-4xl">Score: <span className="text-yellow-400">{score}</span></h2>
-              <h2 className="text-lg">Highscore: <span className="text-yellow-400">{highscore}</span></h2>
-
+        (isTransition ? (
+          <>
+            <div className="flex flex-col items-center text-right justify-center h-full text-4xl">
+              <p className="text-2xl">Get ready for Round {roundNumber + 2}</p>
+              <div className="text-right">
+                {transitionStep >= 1 && <p>Round bonus <span className="text-yellow-400">{lastRoundStats.scoreRoundBonus}</span></p>}
+                {transitionStep >= 2 && <p>Time bonus <span className="text-yellow-400">{lastRoundStats.scoreTimeBonus}</span></p>}
+                {transitionStep >= 3 && <><p>Perfect round <span className="text-yellow-400">{lastRoundStats.scorePerfectRound}</span></p>
+                  <br />
+                  <p> TOTAL  <span className="text-yellow-400">{score}</span></p>
+                </>
+                }
+              </div>
             </div>
-          </div>
+          </>
+        ) : (
+          <>
 
-          {/* <button className="bg-red-700" onClick={() => exitGame()}>exit game</button> */}
-          <div className="flex-col items-start justify-start text-center">
-            {currentStratagems.length === 0 ? (
-              <p>Loading...</p>
-            ) : (
-              <>
-                <div className=" flex gap-4 ml-60 items-center">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-4xl">Round {roundNumber + 1}</h2>
+              <div className="text-right">
 
-                  {currentStratagems.map((stratagem, index) => {
-                    return (
-                      <div key={stratagem.id} className="">
-                        {/* <p>{stratagem.name} - Code: {stratagem.code}</p> */}
-                        <div className={` flex justify-center items-center w-fit  ${index === 0 ? 'border-yellow-400 border-4 bg-neutral-800' : ''}`}>
-                          <img
-                            src={`/stratagem_icons/${stratagem.name}.svg`}
-                            alt={stratagem.name}
-                            width={`${index === 0 ? '140px' : '100px'}`}
-                            draggable="false"
-                          />
+                <h2 className="text-4xl">Score: <span className="text-yellow-400">{score}</span></h2>
+                <h2 className="text-lg">Highscore: <span className="text-yellow-400">{highscore}</span></h2>
+
+              </div>
+            </div>
+
+            {/* <button className="bg-red-700" onClick={() => exitGame()}>exit game</button> */}
+            <div className="flex-col items-start justify-start text-center">
+              {currentStratagems.length === 0 ? (
+                <p>Loading...</p>
+              ) : (
+                <>
+                  <div className=" flex gap-4 ml-60 items-center">
+
+                    {currentStratagems.map((stratagem, index) => {
+                      return (
+                        <div key={stratagem.id} className="">
+                          {/* <p>{stratagem.name} - Code: {stratagem.code}</p> */}
+                          <div className={` flex justify-center items-center w-fit  ${index === 0 ? 'border-yellow-400 border-4 bg-neutral-800' : ''}`}>
+                            <img
+                              src={`/stratagem_icons/${stratagem.name}.svg`}
+                              alt={stratagem.name}
+                              width={`${index === 0 ? '140px' : '100px'}`}
+                              draggable="false"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="bg-yellow-400 text-black w-full text-3xl">
-                  <p className="select-none">
-                    {currentStratagems[0].name}
-                  </p>
-                </div>
-                <div>
-                  <InputArrows
-                    code={currentStratagems[0].code}
-                    onComplete={onCompletedStratagem}
-                    onFail={() => setFallos(prev => prev + 1)}
-                  />
-                </div>
-                <div className="h-4 bg-neutral-700 mt-4 overflow-hidden w-full">
-                  <div
-                    className="h-4 bg-yellow-400 transition-all duration-100"
-                    style={{ width: `${(currentTime / timer) * 100}%` }}
-                  />
-                </div>
-              </>
-            )}
-          </div>
-        </>
-      )}
+                      );
+                    })}
+                  </div>
+                  <div className="bg-yellow-400 text-black w-full text-3xl">
+                    <p className="select-none">
+                      {currentStratagems[0].name}
+                    </p>
+                  </div>
+                  <div>
+                    <InputArrows
+                      code={currentStratagems[0].code}
+                      onComplete={onCompletedStratagem}
+                      onFail={() => setFallos(prev => prev + 1)}
+                    />
+                  </div>
+                  <div className="h-4 bg-neutral-700 mt-4 overflow-hidden w-full">
+                    <div
+                      className="h-4 bg-yellow-400 transition-all duration-100"
+                      style={{ width: `${(currentTime / timer) * 100}%` }}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        )))}
     </div>
   );
 }
