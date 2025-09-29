@@ -10,7 +10,7 @@ import tone4 from '../sounds/tone4.mp3';
 import gameLost from '../sounds/gameLost.wav';
 import start from '../sounds/start.wav';
 
-export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, setHighscore }) => {
+export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, setHighscore, setTopHighscores }) => {
 
   //tareas en orden de prioridad
   //TODO: arreglar tamaño de juego
@@ -43,6 +43,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
 
   //Score
   const [score, setScore] = useState(0);
+  const scoreRef = useRef(0);
   const [fallos, setFallos] = useState(0);
 
   //Game Over Screen
@@ -56,8 +57,6 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
     const scoreRoundBonus = 75 + ((roundNumber + 1) * 25);
     const scoreTimeBonus = Math.floor((currentTime / timer) * 100);
     const scorePerfectRound = fallos === 0 ? 100 : 0;
-
-    const roundScore = scoreRoundBonus + scoreTimeBonus + scorePerfectRound;
 
     return {
       scoreRoundBonus,
@@ -117,7 +116,11 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
 
     const stats = endRoundScore(); // calcular stats
     setLastRoundStats(stats); // guardarlos en el state
-    setScore(prev => prev + stats.roundTotal); // acumular puntos
+    setScore(prev => {
+      const newScore = prev + stats.roundTotal;
+      scoreRef.current = newScore;
+      return newScore;
+    }); // acumular puntos
 
     // Pausar música y mostrar transición
     stopMusic();
@@ -143,7 +146,14 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
     setCurrentStratagems(prev => {
       const remaining = prev.slice(1);
       addSecondsToTimer(0.5);
-      setScore(prev => prev + (currentStratagems[0].code.length * 5)); //+5 score por flecha en estratagema completada
+      //setScore(prev => prev + (currentStratagems[0].code.length * 5)); //+5 score por flecha en estratagema completada
+
+      setScore(prev => {
+        const newScore = prev + (currentStratagems[0].code.length * 5);
+        console.log("Score actualizado:", newScore);
+        scoreRef.current = newScore;
+        return newScore;
+      });
 
       // Si no quedan más estratagemas, iniciar nueva ronda
       if (remaining.length === 0) {
@@ -175,14 +185,43 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
     return () => clearInterval(intervalRef);
   }
 
-  const gameOverScreen = () => {
-    const newHighscore = Math.max(score, highscore);
-    if (newHighscore > highscore) setIsNewHighscore(true);
+  //la lista solo puede tener 10 elementos. lista ordenada de mayor a menor. si un nuevo highscore esta entre dos numeros, se mete en medio y se elimina el último
 
-    setHighscore(newHighscore);
-    localStorage.setItem("highscore", newHighscore);
+  //TODO: ARREGLAR ESTO
+  const updateTopHighscores = (newHighscore) => {
+    newHighscore = parseInt(newHighscore);
+    let topScores = localStorage.getItem("topHighscores");
+    topScores = topScores ? topScores.split(',').map(Number) : [];
+
+    if (topScores.includes(0)) {
+      topScores = topScores.filter(score => score !== 0);
+    }
+
+    topScores.push(newHighscore);
+
+    topScores = [...new Set(topScores)].sort((a, b) => b - a).slice(0, 10); // ordenar y limitar a 10
+
+    localStorage.setItem("topHighscores", topScores.join(','));
+    setTopHighscores(topScores);
+    return topScores;
+  }
+
+  const gameOverScreen = () => {
+
+    const finalScore = scoreRef.current;
+    console.log("game over con score:", finalScore);
 
     setGameOver(true);
+
+    if (!localStorage.getItem("highscore") || finalScore >= highscore) {
+
+      setIsNewHighscore(true);
+      setHighscore(finalScore);
+      localStorage.setItem("highscore", finalScore);
+      updateTopHighscores(finalScore);
+      console.log("nuevo highscore guardado");
+    }
+
     stopMusic();
     playGameLost();
     //console.log("Game Over ON");
@@ -202,8 +241,6 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
     return () => clearInterval(intervalRef.current);
   }, [roundNumber]);
 
-
-
   return (
 
     <div className="game-container w-[1000px]">
@@ -211,6 +248,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
         <>
           <div className="text-center">
             <h2 className="text-5xl">Game Over!</h2>
+            <br />
             <p className="text-4xl">Final Score: <span className="text-yellow-400">{score}</span></p>
             <br />
             {isNewHighscore && <p className="text-3xl text-yellow-400 animate-pulse">New Highscore!</p>}

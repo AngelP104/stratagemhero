@@ -12,6 +12,12 @@ export const Menu = () => {
   const musicEnabledRef = useRef(musicEnabled);
   musicEnabledRef.current = musicEnabled; // actualizar en cada render
 
+  const [topHighscores, setTopHighscores] = useState(() => {
+    const saved = localStorage.getItem("topHighscores");
+    return saved ? saved.split(',').map(Number) : [];
+  }); // highscores
+
+
   const [highscore, setHighscore] = useState(() => {
     const saved = localStorage.getItem("highscore");
     return saved ? parseInt(saved) : 0; // si no hay valor, inicializa en 0
@@ -54,6 +60,9 @@ export const Menu = () => {
     };
   }, [handleKeyPress]);
 
+  const getTopHighscores = () => {
+    return topHighscores || [];
+  }
 
   return (
     <>
@@ -69,8 +78,25 @@ export const Menu = () => {
                 <p className="text-neutral-400 mr-1">[M] Music</p>
               </div>
 
-              <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-50">
+              {/* Top highscores */}
+              <div className="absolute right-4 flex items-center gap-2">
+                <div className='text-white border-2 border-neutral-400 p-2 rounded-md'>
+                  <h2 className='text-center'>Your Highscores</h2>
+                  <ol>
+                    {topHighscores && topHighscores.length > 0 ? (
+                      topHighscores.map((score, index) => (
+                        <li key={index}>{index + 1}. <span className="text-yellow-400">{score}</span></li>
+                      ))
+                    ) : (
+                      <li className="text-neutral-400">No highscores yet</li>
+                    )}
+                  </ol>
+                </div>
+              </div>
 
+
+              {/* Enlace a GitHub */}
+              <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-50">
                 <a href="https://github.com/AngelP104"
                   target='_blank'
                   rel="noreferrer"
@@ -92,7 +118,7 @@ export const Menu = () => {
             </>
           ) : (
             <>
-              <Game showMenu={setShowMenu} stopMusic={stop} playMusic={playMusic} musicEnabled={musicEnabled} highscore={highscore} setHighscore={setHighscore} />
+              <Game showMenu={setShowMenu} stopMusic={stop} playMusic={playMusic} musicEnabled={musicEnabled} highscore={highscore} setHighscore={setHighscore} setTopHighscores={setTopHighscores} />
             </>
           )}
         </div>
