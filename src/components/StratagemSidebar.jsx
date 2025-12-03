@@ -37,13 +37,23 @@ export const StratagemSidebar = ({ filteredCode }) => {
             <div className='m-2'>
               <p className='text-xs'>{stratagem.name}</p>
 
-              <div className='flex gap-1'>
-                {[...stratagem.code].map((dir, i) => {
-                  return (
-                    <i key={i} className={getArrowSymbol(dir)}></i>
-                  )
-                })}
-              </div>
+              <div className="flex gap-1">
+              {[...stratagem.code].map((dir, i) => {
+
+                // LÓGICA DE COLOREADO
+                const isMatched = i < filteredCode.length;
+
+                return (
+                  <i
+                    key={i}
+                    className={`
+                      ${getArrowSymbol(dir)}
+                      ${isMatched ? "text-yellow-300 opacity-100" : "opacity-50"}
+                    `}
+                  ></i>
+                );
+              })}
+            </div>
             </div>
           </div>
         )

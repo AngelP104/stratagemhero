@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router";
 import { StratagemSidebar } from "./StratagemSidebar";
-import { useState } from "react";
+import { useState, useCallback, useLayoutEffect } from "react";
 import stratagems from '../data/stratagems.json';
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useSound } from "use-sound";
+import { ModalInfo } from "./ModalInfo";
 
 import input1 from '../sounds/input1.ogg';
 import input2 from '../sounds/input2.ogg';
@@ -14,6 +15,14 @@ import inputCancel from '../sounds/inputCancel.wav'
 import sfx500kg from '../sounds/sfx500kg.wav';
 import sfxAutocannonSentry from '../sounds/sfxAutocannonSentry.wav';
 import sfxPortableHellbomb from '../sounds/sfxPortableHellbomb.wav';
+import sfxEMSMortarSentry from '../sounds/sfxEMSMortarSentry.mp3';
+import sfxGatlingSentry from '../sounds/sfxGatlingSentry.mp3';
+import sfxMachineGunSentry from '../sounds/sfxMachineGunSentry.mp3';
+import sfxOrbitalEMSStrike from '../sounds/sfxOrbitalEMSStrike.mp3';
+import sfxOrbitalGasStrike from '../sounds/sfxOrbitalGasStrike.mp3';
+import sfxOrbitalLaser from '../sounds/sfxOrbitalLaser.mp3';
+import sfxOrbitalRailcannonStrike from '../sounds/sfxOrbitalRailcannonStrike.mp3';
+
 
 export const SimulatorPad = () => {
 
@@ -29,15 +38,38 @@ export const SimulatorPad = () => {
   const [playInputDone] = useSound(inputDone, { preload: true });
   const [playInputCancel] = useSound(inputCancel, { preload: true });
 
+  //Stratagem sounds
   const [playSfx500kg] = useSound(sfx500kg, { preload: true });
   const [playSfxAutocannonSentry] = useSound(sfxAutocannonSentry, { preload: true });
   const [playSfxPortableHellbomb] = useSound(sfxPortableHellbomb, { preload: true });
+  const [playSfxEMSMortarSentry] = useSound(sfxEMSMortarSentry, { preload: true });
+  const [playSfxGatlingSentry] = useSound(sfxGatlingSentry, { preload: true });
+  const [playSfxMachineGunSentry] = useSound(sfxMachineGunSentry, { preload: true });
+  const [playSfxOrbitalEMSStrike] = useSound(sfxOrbitalEMSStrike, { preload: true });
+  const [playSfxOrbitalGasStrike] = useSound(sfxOrbitalGasStrike, { preload: true });
+  const [playSfxOrbitalLaser] = useSound(sfxOrbitalLaser, { preload: true });
+  const [playSfxOrbitalRailcannonStrike] = useSound(sfxOrbitalRailcannonStrike, { preload: true });
+
+  const stratagemSoundMap = {
+    wdsss: playSfx500kg,                 // 500kg Bomb
+    swdwaw: playSfxAutocannonSentry,     // Autocannon Sentry
+    sdwww: playSfxPortableHellbomb,      // Hellbomb
+    swdsd: playSfxEMSMortarSentry,       // EMS Mortar Sentry
+    swda: playSfxGatlingSentry,          // Gatling Sentry
+    swddw: playSfxMachineGunSentry,      // Machine Gun Sentry
+    ddas: playSfxOrbitalEMSStrike,       // Orbital EMS Strike
+    ddsd: playSfxOrbitalGasStrike,       // Orbital Gas Strike
+    dwssd: playSfxOrbitalRailcannonStrike // Orbital Railcannon Strike
+  };
+
+
 
   //States
   const [showStratagemSidebar, setShowStratagemSidebar] = useState(false);
   const [buttonsUsageMode, setButtonsUsageMode] = useState(true);
   const [buttonInput, setButtonInput] = useState("");
   const [matchedStratagem, setMatchedStratagem] = useState(null);
+  const [showModalInfo, setShowModalInfo] = useState(false);
 
   const getArrowSymbol = (direction) => {
     switch (direction) {
@@ -89,7 +121,7 @@ export const SimulatorPad = () => {
       setButtonInput("");
     } else {
 
-      //Play SFX
+      //Play SFX for every button
       switch (dir) {
         case "w":
           playInput1();
@@ -110,68 +142,92 @@ export const SimulatorPad = () => {
     }
   }
 
-  //Al lanzar una estratagema se reproduce un SFX si tiene
+  //Al lanzar una estratagema se reproduce un SFX (si tiene)
   const stratagemSfxPlayer = (code) => {
 
     playInputCancel();
     setButtonInput("");
     setMatchedStratagem("");
 
-    switch (code) {
-      case "wdsss":
-        playSfx500kg();
-        break;
+    //? Reproduce el sonido dependiendo del codigo, y si no encuentra ninguno no falla
+    stratagemSoundMap[code]?.();
+  }
 
-      case "swdwaw":
-        playSfxAutocannonSentry();
-        break;
+  const handleKeyPress = useCallback((event) => {
+    let pressedKey = "";
 
-      case "sdwww":
-        playSfxPortableHellbomb();
+    switch (event.key.toLowerCase()) {
+      case "w":
+      case "arrowup":
+        pressedKey = "w";
+        break;
+      case "s":
+      case "arrowdown":
+        pressedKey = "s";
+        break;
+      case "a":
+      case "arrowleft":
+        pressedKey = "a";
+        break;
+      case "d":
+      case "arrowright":
+        pressedKey = "d";
+        break;
       default:
-        break;
+        return; // ignorar otras teclas
     }
 
+    handleButtonPress(pressedKey);
+    event.preventDefault();
 
-  }
+  }, [handleButtonPress]);
+
+  useLayoutEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
+
 
   return (
     <>
-      <FullScreen handle={handleFullscreen}>
+      {/* <FullScreen handle={handleFullscreen}> */}
 
-        <div class="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800">
-          {/* Botón usar simulador */}
-          <div className="absolute top-4 left-4 flex items-center gap-2">
-            <button className='border-2 border-neutral-200 px-1' onClick={() => navigate("/")}>
-              <i className='fa-sharp fa-solid fa-gamepad text-2xl text-white'></i>
-            </button>
-            <p className="text-white mr-1">Arcade</p>
-          </div>
-          {/* Botón mostrar sidebar estratagemas */}
-          <div className="absolute top-16 left-4 flex items-center gap-2">
-            <button className='border-2 border-neutral-200 px-1' onClick={() => showSidebar()}>
-              <i className='fa-sharp fa-solid fa-globe text-2xl text-white'></i>
-            </button>
-            <p className="text-white mr-1">Stratagems</p>
-          </div>
+      <div class="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800">
+        {/* Botón usar simulador */}
+        <div className="absolute top-4 left-4 flex items-center gap-2">
+          <button className='border-2 border-neutral-200 px-1' onClick={() => navigate("/")}>
+            <i className='fa-sharp fa-solid fa-gamepad text-2xl text-white'></i>
+          </button>
+          <p className="text-white mr-1">Arcade</p>
+        </div>
+        {/* Botón mostrar sidebar estratagemas */}
+        <div className="absolute top-16 left-4 flex items-center gap-2">
+          <button className='border-2 border-neutral-200 px-1' onClick={() => showSidebar()}>
+            <i className='fa-sharp fa-solid fa-globe text-2xl text-white'></i>
+          </button>
+          <p className="text-white mr-1">Stratagems</p>
+        </div>
 
-          {/* Botón cambiar modo de uso (BUTTONS / SLIDE) */}
-          <div className="absolute top-4 right-4 flex items-center gap-2">
-            <button className='border-2 border-neutral-200 px-1' onClick={() => changeUsageMode()}>
-              {buttonsUsageMode ?
-                <>
-                  <i className='fa-sharp fa-solid fa-circle-dot text-2xl text-white'></i>
+        {/* Botón cambiar modo de uso (BUTTONS / SLIDE) */}
+        <div className="absolute top-4 right-4 flex items-center gap-2">
+          <button className='border-2 border-neutral-200 px-1' onClick={() => changeUsageMode()}>
+            {buttonsUsageMode ?
+              <>
+                <i className='fa-sharp fa-solid fa-circle-dot text-2xl text-white'></i>
 
-                </> : <>
+              </> : <>
 
-                  <i className='fa-sharp fa-solid fa-up-down-left-right text-2xl text-white'></i>
-                </>}
-            </button>
-            <p className="text-white mr-1">Usage Mode</p>
-          </div>
+                <i className='fa-sharp fa-solid fa-up-down-left-right text-2xl text-white'></i>
+              </>}
+          </button>
+          <p className="text-white mr-1">Usage Mode</p>
+        </div>
 
-          {/* Enter FullScreen */}
-          {/* <div className="absolute top-16 right-4 flex items-center gap-2">
+        {/* Enter FullScreen */}
+        {/* <div className="absolute top-16 right-4 flex items-center gap-2">
             <button className='border-2 border-neutral-200 px-2' onClick={() => handleFullscreen.enter}>
 
               <i className='fa-sharp fa-solid fa-expand text-2xl text-white'></i>
@@ -180,102 +236,119 @@ export const SimulatorPad = () => {
             <p className="text-white mr-1">Fullscreen</p>
           </div> */}
 
-          {/* Reset stratagem */}
-          <div className="absolute bottom-4 right-4 flex items-center gap-2">
-            <button className='border-2 border-neutral-200 px-2' onClick={() => resetInputButton()}>
+        {/* Show Modal Info */}
+        <div className="absolute top-16 right-4 flex items-center gap-2">
+          <button className='border-2 border-neutral-200 px-1' onClick={() => setShowModalInfo(!showModalInfo)}>
 
-              <i className='fa-sharp fa-solid fa-xmark text-2xl text-white'></i>
+            <i className='fa-sharp fa-solid fa-music text-2xl text-white'></i>
 
-            </button>
-            <p className="text-white mr-1">Reset Input</p>
-          </div>
+          </button>
+          <p className="text-white mr-1">SFX List</p>
+        </div>
 
-          {showStratagemSidebar && (
-            <>
-              <div className="absolute top-28 left-4">
-                <StratagemSidebar filteredCode={buttonInput} />
-              </div>
-            </>
-          )}
+        {/* Reset stratagem */}
+        <div className="absolute bottom-4 right-4 flex items-center gap-2">
+          <button className='border-2 border-neutral-200 px-2' onClick={() => resetInputButton()}>
+
+            <i className='fa-sharp fa-solid fa-xmark text-2xl text-white'></i>
+
+          </button>
+          <p className="text-white mr-1">Reset Input</p>
+        </div>
+
+        {showStratagemSidebar && (
+          <>
+            <div className="absolute top-28 left-4">
+              <StratagemSidebar filteredCode={buttonInput} />
+            </div>
+          </>
+        )}
 
 
-          {/* ARROWS if button mode is selected (buttonsUsageMode === true) */}
-          {buttonsUsageMode && !matchedStratagem ?
-            <>
-              <div className="flex flex-col min-h-screen w-full justify-center items-center text-7xl text-white">
-                {/* UP */}
-                <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400 focus:outline-none focus:ring-0 active:outline-none
+        {/* ARROWS if button mode is selected (buttonsUsageMode === true) */}
+        {buttonsUsageMode && !matchedStratagem ?
+          <>
+            <div className="flex flex-col min-h-screen w-full justify-center items-center text-7xl text-white">
+              {/* UP */}
+              <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400 focus:outline-none focus:ring-0 active:outline-none
 " onClick={() => handleButtonPress("w")}>
-                  <div className="mx-5 my-2">
-                    <i className="fa-sharp fa-solid fa-up"></i>
+                <div className="mx-5 my-2">
+                  <i className="fa-sharp fa-solid fa-up"></i>
+                </div>
+              </button>
+
+              <div className="flex">
+                {/* LEFT */}
+                <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("a")} >
+                  <div className="mx-4 my-2">
+                    <i className="fa-sharp fa-solid fa-left"></i>
                   </div>
                 </button>
-
-                <div className="flex">
-                  {/* LEFT */}
-                  <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("a")} >
-                    <div className="mx-4 my-2">
-                      <i className="fa-sharp fa-solid fa-left"></i>
-                    </div>
-                  </button>
-                  {/* Separador */}
-                  <div className="mx-10 px-2">
-                  </div>
-
-                  {/* RIGHT */}
-                  <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("d")}>
-                    <div className="mx-4 my-2">
-                      <i className="fa-sharp fa-solid fa-right"></i>
-                    </div>
-                  </button>
+                {/* Separador */}
+                <div className="mx-10 px-2">
                 </div>
 
-                {/* DOWN */}
-                <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("s")}>
-                  <div className="mx-5 my-2">
-                    <i className="fa-sharp fa-solid fa-down"></i>
+                {/* RIGHT */}
+                <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("d")}>
+                  <div className="mx-4 my-2">
+                    <i className="fa-sharp fa-solid fa-right"></i>
                   </div>
                 </button>
               </div>
-            </> : <>
 
-            </>}
-
-          {/* Arrows selected until the next stratagem pops up */}
-          {buttonInput !== "" && (
-            <>
-              <div className="absolute top-36 right-4 text-center text-xl text-white">
-                <p>{[...buttonInput].map((dir, i) => {
-                  return (
-                    <i key={i} className={`${getArrowSymbol(dir)} ml-1`}></i>
-
-                  )
-                })}
-                </p>
-              </div>
-            </>
-          )}
-
-          {/* Found stratagem */}
-          {matchedStratagem && (
-            <div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-               bg-black/70 p-4 w-96 rounded-lg text-white text-center z-50"
-              onClick={() => stratagemSfxPlayer(buttonInput)}
-            >
-              <p className="text-3xl my-1">{matchedStratagem.name}</p>
-              <img
-                src={`/stratagem_icons/${matchedStratagem.name}.svg`}
-                alt={matchedStratagem.name}
-                width="200px"
-                draggable="false"
-                className='border-4 border-yellow-400 mx-auto mb-2'
-              />
+              {/* DOWN */}
+              <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("s")}>
+                <div className="mx-5 my-2">
+                  <i className="fa-sharp fa-solid fa-down"></i>
+                </div>
+              </button>
             </div>
-          )}
+          </> : <>
 
-        </div>
-      </FullScreen>
+          </>}
+
+        {/* Arrows selected until the next stratagem pops up */}
+        {buttonInput !== "" && (
+          <>
+            <div className="absolute top-36 right-4 text-center text-xl text-white">
+              <p>{[...buttonInput].map((dir, i) => {
+                return (
+                  <i key={i} className={`${getArrowSymbol(dir)} ml-1`}></i>
+
+                )
+              })}
+              </p>
+            </div>
+          </>
+        )}
+
+        {/* Found stratagem */}
+        {matchedStratagem && (
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+               bg-black/70 p-4 w-96 rounded-lg text-white text-center z-50"
+            onClick={() => stratagemSfxPlayer(buttonInput)}
+          >
+            <p className="text-3xl my-1">{matchedStratagem.name}</p>
+            <img
+              src={`/stratagem_icons/${matchedStratagem.name}.svg`}
+              alt={matchedStratagem.name}
+              width="200px"
+              draggable="false"
+              className='border-4 border-yellow-400 mx-auto mb-2'
+            />
+          </div>
+        )}
+        {/* Modal Info */}
+        {showModalInfo && (
+          <ModalInfo
+            stratagemCodesMap={stratagemSoundMap}
+            onClose={() => setShowModalInfo(false)}
+          />
+        )}
+
+      </div>
+      {/* </FullScreen > */}
     </>
   )
 }
