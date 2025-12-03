@@ -1,9 +1,9 @@
-import { Menu } from './components/Menu'
+import { AppRoutes } from './AppRoutes'
 
 export const App = () => {
   return (
     <>
-    <Menu />
+    <AppRoutes />
     </>
   )
 }

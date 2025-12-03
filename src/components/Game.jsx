@@ -28,10 +28,10 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
   const [playTone3] = useSound(tone3, { preload: true });
   const [playTone4] = useSound(tone4, { preload: true });
   const [playGameLost] = useSound(gameLost, { preload: true });
-  const [playStart] = useSound(start, { preload: true });
+  const [playStart] = useSound(start, { preload: true, volume: 0.3 });
 
   //Timer
-  const [timer, setTimer] = useState(10); // tiempo con el que empieza cada ronda, en segundos
+  const [timer, setTimer] = useState(12); //? tiempo con el que empieza cada ronda, en segundos (DEFAULT = 12)
   const [currentTime, setCurrentTime] = useState(timer); // tiempo actual del temporizador
   const intervalRef = useRef(null);
   const firstRoundRef = useRef(true);
@@ -150,7 +150,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
 
       setScore(prev => {
         const newScore = prev + (currentStratagems[0].code.length * 5);
-        console.log("Score actualizado:", newScore);
+        //console.log("Score actualizado:", newScore);
         scoreRef.current = newScore;
         return newScore;
       });
@@ -186,8 +186,6 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
   }
 
   //la lista solo puede tener 10 elementos. lista ordenada de mayor a menor. si un nuevo highscore esta entre dos numeros, se mete en medio y se elimina el último
-
-  //TODO: ARREGLAR ESTO
   const updateTopHighscores = (newHighscore) => {
     newHighscore = parseInt(newHighscore);
     let topScores = localStorage.getItem("topHighscores");
@@ -241,8 +239,10 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
     return () => clearInterval(intervalRef.current);
   }, [roundNumber]);
 
-  return (
 
+  
+//TODO: ARREGLAR TAMAÑO MOVIL
+  return (
     <div className="game-container w-[1000px]">
       {gameOver ? (
         <>
@@ -272,7 +272,6 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
           </>
         ) : (
           <>
-
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-4xl">Round {roundNumber + 1}</h2>
               <div className="text-right">

@@ -3,8 +3,12 @@ import { Game } from './Game';
 
 import useSound from 'use-sound';
 import loopSong from '../sounds/loop.mp3';
+import { useNavigate } from 'react-router';
 
 export const Menu = () => {
+
+  const navigate = useNavigate();
+
   const [showMenu, setShowMenu] = useState(true);
   const [playMusic, { stop }] = useSound(loopSong, { loop: true, volume: 0.5 });
   const [musicEnabled, setMusicEnabled] = useState(localStorage.getItem("music") || "on");
@@ -60,10 +64,6 @@ export const Menu = () => {
     };
   }, [handleKeyPress]);
 
-  const getTopHighscores = () => {
-    return topHighscores || [];
-  }
-
   return (
     <>
       <main>
@@ -76,6 +76,14 @@ export const Menu = () => {
                   <i className={`fa-sharp fa-solid ${musicEnabled === "on" ? "fa-volume" : "fa-volume-slash"} text-2xl`}></i>
                 </button>
                 <p className="text-neutral-400 mr-1">[M] Music</p>
+              </div>
+
+              {/* Botón usar simulador */}
+              <div className="absolute top-4 left-4 flex items-center gap-2">
+                <button className='border-2 border-neutral-400 px-1' onClick={()=>navigate("/pad")}>
+                  <i className='fa-sharp fa-solid fa-gamepad text-2xl'></i>
+                </button>
+                <p className="text-neutral-400 mr-1">Simulator</p>
               </div>
 
               {/* Top highscores */}

@@ -9,7 +9,10 @@
     "@testing-library/user-event": "^13.5.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-full-screen": "^1.1.1",
     "react-hooks": "^1.0.1",
+    "react-router": "^7.9.6",
+    "react-router-dom": "^7.9.6",
     "react-scripts": "5.0.1",
     "use-sound": "^5.0.0",
     "web-vitals": "^2.1.4"
