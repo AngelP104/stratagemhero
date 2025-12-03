@@ -33,6 +33,7 @@ export const SimulatorPad = () => {
   const [playSfxAutocannonSentry] = useSound(sfxAutocannonSentry, { preload: true });
   const [playSfxPortableHellbomb] = useSound(sfxPortableHellbomb, { preload: true });
 
+  //States
   const [showStratagemSidebar, setShowStratagemSidebar] = useState(false);
   const [buttonsUsageMode, setButtonsUsageMode] = useState(true);
   const [buttonInput, setButtonInput] = useState("");
@@ -65,24 +66,7 @@ export const SimulatorPad = () => {
 
   const handleButtonPress = (dir) => {
 
-    //SFX
-    switch (dir) {
-      case "w":
-        playInput1();
-        break;
-      case "s":
-        playInput2();
-        break;
-      case "a":
-        playInput3();
-        break;
-      case "d":
-        playInput4();
-        break;
 
-      default:
-        break;
-    }
 
     // Input acumulado
     const newInput = buttonInput + dir;
@@ -101,7 +85,28 @@ export const SimulatorPad = () => {
     const stillPosible = stratagems.some(s => s.code.startsWith(newInput));
 
     if (!stillPosible) {
+      playInputCancel();
       setButtonInput("");
+    } else {
+
+      //Play SFX
+      switch (dir) {
+        case "w":
+          playInput1();
+          break;
+        case "s":
+          playInput2();
+          break;
+        case "a":
+          playInput3();
+          break;
+        case "d":
+          playInput4();
+          break;
+
+        default:
+          break;
+      }
     }
   }
 
@@ -166,14 +171,14 @@ export const SimulatorPad = () => {
           </div>
 
           {/* Enter FullScreen */}
-          <div className="absolute top-16 right-4 flex items-center gap-2">
+          {/* <div className="absolute top-16 right-4 flex items-center gap-2">
             <button className='border-2 border-neutral-200 px-2' onClick={() => handleFullscreen.enter}>
 
               <i className='fa-sharp fa-solid fa-expand text-2xl text-white'></i>
 
             </button>
             <p className="text-white mr-1">Fullscreen</p>
-          </div>
+          </div> */}
 
           {/* Reset stratagem */}
           <div className="absolute bottom-4 right-4 flex items-center gap-2">
@@ -188,7 +193,7 @@ export const SimulatorPad = () => {
           {showStratagemSidebar && (
             <>
               <div className="absolute top-28 left-4">
-                <StratagemSidebar filteredCode={buttonInput}/>
+                <StratagemSidebar filteredCode={buttonInput} />
               </div>
             </>
           )}
@@ -197,39 +202,40 @@ export const SimulatorPad = () => {
           {/* ARROWS if button mode is selected (buttonsUsageMode === true) */}
           {buttonsUsageMode && !matchedStratagem ?
             <>
-              <div className="flex flex-col min-h-screen w-full justify-center items-center text-8xl text-white">
+              <div className="flex flex-col min-h-screen w-full justify-center items-center text-7xl text-white">
                 {/* UP */}
-                <div className="border-2 border-white">
-                  <button onClick={() => handleButtonPress("w")} className="mx-5 my-1">
+                <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400 focus:outline-none focus:ring-0 active:outline-none
+" onClick={() => handleButtonPress("w")}>
+                  <div className="mx-5 my-2">
                     <i className="fa-sharp fa-solid fa-up"></i>
-                  </button>
-                </div>
+                  </div>
+                </button>
 
                 <div className="flex">
                   {/* LEFT */}
-                  <div className="border-2 border-white">
-
-                    <button onClick={() => handleButtonPress("a")} className="mx-3 my-1">
+                  <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("a")} >
+                    <div className="mx-4 my-2">
                       <i className="fa-sharp fa-solid fa-left"></i>
-                    </button>
-                  </div>
-                  <div className="mx-12 px-2">
+                    </div>
+                  </button>
+                  {/* Separador */}
+                  <div className="mx-10 px-2">
                   </div>
 
                   {/* RIGHT */}
-                  <div className="border-2 border-white">
-                    <button onClick={() => handleButtonPress("d")} className="mx-3 my-1">
+                  <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("d")}>
+                    <div className="mx-4 my-2">
                       <i className="fa-sharp fa-solid fa-right"></i>
-                    </button>
-                  </div>
+                    </div>
+                  </button>
                 </div>
 
                 {/* DOWN */}
-                <div className="border-2 border-white">
-                  <button onClick={() => handleButtonPress("s")} className="mx-5 my-1">
+                <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("s")}>
+                  <div className="mx-5 my-2">
                     <i className="fa-sharp fa-solid fa-down"></i>
-                  </button>
-                </div>
+                  </div>
+                </button>
               </div>
             </> : <>
 
@@ -257,13 +263,13 @@ export const SimulatorPad = () => {
                bg-black/70 p-4 w-96 rounded-lg text-white text-center z-50"
               onClick={() => stratagemSfxPlayer(buttonInput)}
             >
-              <p className="text-xl">{matchedStratagem.name}</p>
+              <p className="text-3xl my-1">{matchedStratagem.name}</p>
               <img
                 src={`/stratagem_icons/${matchedStratagem.name}.svg`}
                 alt={matchedStratagem.name}
                 width="200px"
                 draggable="false"
-                className='border-2 border-yellow-400 mx-auto mb-2'
+                className='border-4 border-yellow-400 mx-auto mb-2'
               />
             </div>
           )}
