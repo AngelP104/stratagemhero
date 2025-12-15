@@ -270,38 +270,38 @@ export const SimulatorPad = () => {
           <>
             <div className="flex flex-col min-h-screen w-full justify-center items-center text-7xl text-white">
               {/* UP */}
-              <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400 focus:outline-none focus:ring-0 active:outline-none
+              <div className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400 focus:outline-none focus:ring-0 active:outline-none
 " onClick={() => handleButtonPress("w")}>
                 <div className="mx-5 my-2">
                   <i className="fa-sharp fa-solid fa-up"></i>
                 </div>
-              </button>
+              </div>
 
               <div className="flex">
                 {/* LEFT */}
-                <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("a")} >
+                <div className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("a")} >
                   <div className="mx-4 my-2">
                     <i className="fa-sharp fa-solid fa-left"></i>
                   </div>
-                </button>
+                </div>
                 {/* Separador */}
                 <div className="mx-10 px-2">
                 </div>
 
                 {/* RIGHT */}
-                <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("d")}>
+                <div className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("d")}>
                   <div className="mx-4 my-2">
                     <i className="fa-sharp fa-solid fa-right"></i>
                   </div>
-                </button>
+                </div>
               </div>
 
               {/* DOWN */}
-              <button className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("s")}>
+              <div className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400" onClick={() => handleButtonPress("s")}>
                 <div className="mx-5 my-2">
                   <i className="fa-sharp fa-solid fa-down"></i>
                 </div>
-              </button>
+              </div>
             </div>
           </> : <>
 
