@@ -22,19 +22,20 @@ export const StratagemSidebar = ({ filteredCode }) => {
   );
 
   return (
-    <div className="max-h-52 overflow-y-auto text-white bg-black/30">
+    <div className="max-h-56 overflow-y-auto text-white bg-black/30">
       {filteredStratagems.map(stratagem => {
         return (
           <div className='flex m-1' key={stratagem.id}>
             <img
               src={`/stratagem_icons/${stratagem.name}.svg`}
               alt={stratagem.name}
-              width="48px"
+              width="40px"
+              height="40px"
               draggable="false"
-              className='border-2 border-yellow-400'
+              className='border-2 border-yellow-400 bg-black/20'
             />
 
-            <div className='m-2'>
+            <div className='m-1'>
               <p className='text-xs'>{stratagem.name}</p>
 
               <div className="flex gap-1">

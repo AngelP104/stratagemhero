@@ -50,6 +50,7 @@ export const SimulatorPad = () => {
   const [playSfxOrbitalLaser] = useSound(sfxOrbitalLaser, { preload: true });
   const [playSfxOrbitalRailcannonStrike] = useSound(sfxOrbitalRailcannonStrike, { preload: true });
 
+  // Play sounds depending on the stratagem
   const stratagemSoundMap = {
     wdsss: playSfx500kg,                 // 500kg Bomb
     swdwaw: playSfxAutocannonSentry,     // Autocannon Sentry
@@ -121,24 +122,36 @@ export const SimulatorPad = () => {
       setButtonInput("");
     } else {
 
-      //Play SFX for every button
-      switch (dir) {
-        case "w":
-          playInput1();
-          break;
-        case "s":
-          playInput2();
-          break;
-        case "a":
-          playInput3();
-          break;
-        case "d":
-          playInput4();
-          break;
-
-        default:
-          break;
+      // Play a random sound between different sounds
+      //4 is tthe maximum and 1 is the minimum
+      let randomInputSfx = Math.floor(Math.random() * ((4 - 1 + 1)) + 1);
+      if (randomInputSfx === 1) {
+        playInput1();
+      } else if (randomInputSfx === 2) {
+        playInput2();
+      } else if (randomInputSfx === 3) {
+        playInput3();
+      } else if (randomInputSfx === 4) {
+        playInput4();
       }
+      // //Play SFX for every button
+      // switch (dir) {
+      //   case "w":
+      //     playInput1();
+      //     break;
+      //   case "s":
+      //     playInput2();
+      //     break;
+      //   case "a":
+      //     playInput3();
+      //     break;
+      //   case "d":
+      //     playInput4();
+      //     break;
+
+      //   default:
+      //     break;
+      // }
     }
   }
 
@@ -197,14 +210,14 @@ export const SimulatorPad = () => {
 
       <div class="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800">
         {/* Botón usar simulador */}
-        <div className="absolute top-4 left-4 flex items-center gap-2">
+        <div className="absolute top-4 right-4 flex items-center gap-2">
           <button className='border-2 border-neutral-200 px-1' onClick={() => navigate("/")}>
-            <i className='fa-sharp fa-solid fa-gamepad text-2xl text-white'></i>
+            <i className='fa-sharp fa-solid fa-gamepad text-lg text-white'></i>
           </button>
           <p className="text-white mr-1">Arcade</p>
         </div>
         {/* Botón mostrar sidebar estratagemas */}
-        <div className="absolute top-16 left-4 flex items-center gap-2">
+        <div className="absolute top-4 left-4 flex items-center gap-2">
           <button className='border-2 border-neutral-200 px-1' onClick={() => showSidebar()}>
             <i className='fa-sharp fa-solid fa-globe text-2xl text-white'></i>
           </button>
@@ -212,7 +225,10 @@ export const SimulatorPad = () => {
         </div>
 
         {/* Botón cambiar modo de uso (BUTTONS / SLIDE) */}
-        <div className="absolute top-4 right-4 flex items-center gap-2">
+        {/* WORK IN PROGRESS */}
+
+
+        {/* <div className="absolute top-4 right-4 flex items-center gap-2">
           <button className='border-2 border-neutral-200 px-1' onClick={() => changeUsageMode()}>
             {buttonsUsageMode ?
               <>
@@ -224,7 +240,7 @@ export const SimulatorPad = () => {
               </>}
           </button>
           <p className="text-white mr-1">Usage Mode</p>
-        </div>
+        </div> */}
 
         {/* Enter FullScreen */}
         {/* <div className="absolute top-16 right-4 flex items-center gap-2">
@@ -247,8 +263,8 @@ export const SimulatorPad = () => {
         </div>
 
         {/* Reset stratagem */}
-        <div className="absolute bottom-4 right-4 flex items-center gap-2">
-          <button className='border-2 border-neutral-200 px-2' onClick={() => resetInputButton()}>
+        <div className="absolute bottom-4 right-4 flex items-center gap-2" onClick={() => resetInputButton()}>
+          <button className='border-2 border-neutral-200 px-2' >
 
             <i className='fa-sharp fa-solid fa-xmark text-2xl text-white'></i>
 
@@ -258,7 +274,7 @@ export const SimulatorPad = () => {
 
         {showStratagemSidebar && (
           <>
-            <div className="absolute top-28 left-4">
+            <div className="absolute top-16 left-4">
               <StratagemSidebar filteredCode={buttonInput} />
             </div>
           </>
@@ -326,14 +342,14 @@ export const SimulatorPad = () => {
         {matchedStratagem && (
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-               bg-black/70 p-4 w-96 rounded-lg text-white text-center z-50"
+               bg-black/70 p-4 rounded-lg text-white text-center z-50"
             onClick={() => stratagemSfxPlayer(buttonInput)}
           >
-            <p className="text-3xl my-1">{matchedStratagem.name}</p>
+            <p className="text-2xl my-1">{matchedStratagem.name}</p>
             <img
               src={`/stratagem_icons/${matchedStratagem.name}.svg`}
               alt={matchedStratagem.name}
-              width="200px"
+              width="180px"
               draggable="false"
               className='border-4 border-yellow-400 mx-auto mb-2'
             />
