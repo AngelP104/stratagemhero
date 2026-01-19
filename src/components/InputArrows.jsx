@@ -13,6 +13,7 @@ export const InputArrows = ({ code, onComplete, onFail }) => {
   const [arrows, setArrows] = useState([]);
   const [currentInput, setCurrentInput] = useState('');
   const [isError, setIsError] = useState(false);
+  // eslint-disable-next-line
   const [inputBlocked, setInputBlocked] = useState(false);
 
   const [playTap1] = useSound(tap1, { preload: true });
@@ -23,15 +24,15 @@ export const InputArrows = ({ code, onComplete, onFail }) => {
   const [playStratComplete] = useSound(stratComplete, { preload: true, volume: 0.5 });
 
   // Cuando cambia el código, reiniciar el input y mostrar las flechas
-  useLayoutEffect(() => {
-    if (code) {
-      showArrows();
-      setCurrentInput('');
-      setIsError(false);
-      //setInputBlocked(false);
-
-    }
-  }, [code]);
+useLayoutEffect(() => {
+  if (code) {
+    showArrows();
+    setCurrentInput('');
+    setIsError(false);
+    //setInputBlocked(false)
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [code]);
 
   const getArrowSymbol = (direction) => {
     switch (direction) {
@@ -113,6 +114,7 @@ export const InputArrows = ({ code, onComplete, onFail }) => {
     });
 
     event.preventDefault();
+    // eslint-disable-next-line
   }, [code, onComplete]);
 
   // Añadir y remover el event listener

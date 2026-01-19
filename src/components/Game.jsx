@@ -17,6 +17,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
   //TODO: sonido de perder no reproduciendose en primera ronda
 
   // Stratagems
+  // eslint-disable-next-line
   const [availableStratagems, setAvailableStratagems] = useState(stratagems); // todas las estratagemas disponibles
   const [currentStratagems, setCurrentStratagems] = useState([]); // lista de estratagemas de esta ronda
   const [roundNumber, setRoundNumber] = useState(0); // num ronda
@@ -237,6 +238,7 @@ export const Game = ({ showMenu, stopMusic, playMusic, musicEnabled, highscore, 
     newRound();
     timerGoesDown();
     return () => clearInterval(intervalRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roundNumber]);
 
 

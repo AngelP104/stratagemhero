@@ -68,6 +68,7 @@ export const SimulatorPad = () => {
 
   //States
   const [showStratagemSidebar, setShowStratagemSidebar] = useState(false);
+  // eslint-disable-next-line
   const [buttonsUsageMode, setButtonsUsageMode] = useState(true);
   const [buttonInput, setButtonInput] = useState("");
   const [matchedStratagem, setMatchedStratagem] = useState(null);
@@ -97,7 +98,7 @@ export const SimulatorPad = () => {
     playInputCancel();
     setMatchedStratagem(null);
   }
-
+// eslint-disable-next-line
   const handleButtonPress = (dir) => {
 
     // Input acumulado

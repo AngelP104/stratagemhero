@@ -54,6 +54,7 @@ export const Menu = () => {
       startGame();
       event.preventDefault();
     }
+    // eslint-disable-next-line
   }, [showMenu, musicEnabled]);
 
   // Añadir y remover el event listener

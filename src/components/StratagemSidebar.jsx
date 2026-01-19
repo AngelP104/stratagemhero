@@ -2,7 +2,7 @@ import stratagems from '../data/stratagems.json';
 import { useState } from 'react';
 
 export const StratagemSidebar = ({ filteredCode }) => {
-
+// eslint-disable-next-line
   const [availableStratagems, setAvailableStratagems] = useState(
     [...stratagems].sort((a, b) => a.name.localeCompare(b.name))
   ); // todas las estratagemas disponibles
