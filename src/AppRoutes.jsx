@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { Menu } from "./components/Menu";
 import { SimulatorPad } from "./components/SimulatorPad"
 
