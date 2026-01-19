@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import { StratagemSidebar } from "./StratagemSidebar";
 import { useState, useCallback, useLayoutEffect } from "react";
 import stratagems from '../data/stratagems.json';
-import { FullScreen, useFullScreenHandle } from "react-full-screen";
+//import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useSound } from "use-sound";
 import { ModalInfo } from "./ModalInfo";
 
@@ -28,7 +28,7 @@ export const SimulatorPad = () => {
 
   const navigate = useNavigate();
 
-  const handleFullscreen = useFullScreenHandle();
+  //const handleFullscreen = useFullScreenHandle();
 
   // Sounds
   const [playInput1] = useSound(input1, { preload: true });
@@ -60,6 +60,7 @@ export const SimulatorPad = () => {
     swddw: playSfxMachineGunSentry,      // Machine Gun Sentry
     ddas: playSfxOrbitalEMSStrike,       // Orbital EMS Strike
     ddsd: playSfxOrbitalGasStrike,       // Orbital Gas Strike
+    dswds: playSfxOrbitalLaser,
     dwssd: playSfxOrbitalRailcannonStrike // Orbital Railcannon Strike
   };
 
@@ -87,9 +88,9 @@ export const SimulatorPad = () => {
     setShowStratagemSidebar(!showStratagemSidebar);
   }
 
-  const changeUsageMode = () => {
-    setButtonsUsageMode(!buttonsUsageMode);
-  }
+  // const changeUsageMode = () => {
+  //   setButtonsUsageMode(!buttonsUsageMode);
+  // }
 
   const resetInputButton = () => {
     setButtonInput("");
@@ -98,8 +99,6 @@ export const SimulatorPad = () => {
   }
 
   const handleButtonPress = (dir) => {
-
-
 
     // Input acumulado
     const newInput = buttonInput + dir;
