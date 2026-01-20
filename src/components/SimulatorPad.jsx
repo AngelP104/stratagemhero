@@ -22,6 +22,7 @@ import sfxOrbitalEMSStrike from '../sounds/sfxOrbitalEMSStrike.mp3';
 import sfxOrbitalGasStrike from '../sounds/sfxOrbitalGasStrike.mp3';
 import sfxOrbitalLaser from '../sounds/sfxOrbitalLaser.mp3';
 import sfxOrbitalRailcannonStrike from '../sounds/sfxOrbitalRailcannonStrike.mp3';
+import hellpodGround from '../sounds/hellpodGround.ogg';
 
 
 export const SimulatorPad = () => {
@@ -37,6 +38,7 @@ export const SimulatorPad = () => {
   const [playInput4] = useSound(input4, { preload: true });
   const [playInputDone] = useSound(inputDone, { preload: true });
   const [playInputCancel] = useSound(inputCancel, { preload: true });
+  const [playHellpodGround] = useSound(hellpodGround, { preload: true });
 
   //Stratagem sounds
   const [playSfx500kg] = useSound(sfx500kg, { preload: true });
@@ -93,12 +95,16 @@ export const SimulatorPad = () => {
   //   setButtonsUsageMode(!buttonsUsageMode);
   // }
 
+  const playHellpodSfx = () => {
+    playHellpodGround();
+  }
+
   const resetInputButton = () => {
     setButtonInput("");
     playInputCancel();
     setMatchedStratagem(null);
   }
-// eslint-disable-next-line
+  // eslint-disable-next-line
   const handleButtonPress = (dir) => {
 
     // Input acumulado
@@ -208,7 +214,7 @@ export const SimulatorPad = () => {
     <>
       {/* <FullScreen handle={handleFullscreen}> */}
 
-      <div class="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800">
+      <div class="min-h-[100dvh] bg-gradient-to-b from-blue-600 to-blue-800 pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
         {/* Botón usar simulador */}
         <div className="absolute top-4 right-4 flex items-center gap-2">
           <button className='border-2 border-neutral-200 px-1' onClick={() => navigate("/")}>
@@ -217,11 +223,11 @@ export const SimulatorPad = () => {
           <p className="text-white mr-1">Arcade</p>
         </div>
         {/* Botón mostrar sidebar estratagemas */}
-        <div className="absolute top-4 left-4 flex items-center gap-2">
-          <button className='border-2 border-neutral-200 px-1' onClick={() => showSidebar()}>
+        <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/30 pr-1" onClick={() => showSidebar()}>
+          <div className='border-2 border-neutral-200 px-1'>
             <i className='fa-sharp fa-solid fa-globe text-2xl text-white'></i>
-          </button>
-          <p className="text-white mr-1">Stratagems</p>
+          </div>
+          <p className="text-white text-sm mr-1">STRATAGEMS</p>
         </div>
 
         {/* Botón cambiar modo de uso (BUTTONS / SLIDE) */}
@@ -260,6 +266,16 @@ export const SimulatorPad = () => {
 
           </button>
           <p className="text-white mr-1">SFX List</p>
+        </div>
+
+        {/* Play hellpod touches ground */}
+        <div className="absolute bottom-16 right-4 flex items-center gap-2">
+          <button className='border-2 border-neutral-200 px-1' onClick={() => playHellpodSfx()}>
+
+            <i className='fa-sharp fa-solid fa-explosion text-2xl text-white'></i>
+
+          </button>
+          <p className="text-white mr-1">Hellpod</p>
         </div>
 
         {/* Reset stratagem */}
