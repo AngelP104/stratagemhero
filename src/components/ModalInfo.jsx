@@ -24,7 +24,7 @@ export const ModalInfo = ({ stratagemCodesMap, onClose }) => {
       className="
         fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
         bg-black/70
-        w-96 h-80 p-2 text-white
+         h-70 p-2 text-white
         z-50
       "
     >
@@ -33,17 +33,17 @@ export const ModalInfo = ({ stratagemCodesMap, onClose }) => {
         <p className="text-lg">Stratagems with SFX</p>
 
         <button onClick={onClose}>
-          <i className="fa-solid fa-sharp fa-x border-2 border-white px-2 text-white text-xl"></i>
+          <i className="fa-solid fa-sharp fa-xmark border-2 border-white px-2 text-white text-xl"></i>
         </button>
       </div>
 
       {/* LISTA DE STRATAGEMS */}
-      <div className="flex flex-col gap-1 
+      <div className="flex flex-col 
         overflow-y-auto h-60">
         {stratagemsWithSfx.map(strat => (
           <div
             key={strat.id}
-            className="flex items-center gap-3 p-1 bg-black/40 rounded"
+            className="flex items-center gap-3 p-1 bg-black/40"
           >
             <img
               src={`/stratagem_icons/${strat.name}.svg`}

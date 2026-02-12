@@ -443,5 +443,35 @@
         "id": "expendable_napalm",
         "name": "Expendable Napalm",
         "code": "ssawa"
+    },
+    {
+        "id": "maxigun",
+        "name": "Maxigun",
+        "code": "sadsww"
+    },
+    {
+        "id": "defoliation_tool",
+        "name": "Defoliation Tool",
+        "code": "sadds"
+    },
+    {
+        "id": "guard_dog_hot_dog",
+        "name": "Guard Dog Hot Dog",
+        "code": "swawaa"
+    },
+    {
+        "id": "c4_pack",
+        "name": "C4 Pack",
+        "code": "sdwwdw"
+    },
+    {
+        "id": "breaching_hammer",
+        "name": "Breaching Hammer",
+        "code": "sadaw"
+    },
+    {
+        "id": "fed_grenade_launcher",
+        "name": "Fed Grenade Launcher",
+        "code": "sawaww"
     }
 ]

@@ -215,7 +215,7 @@ export const SimulatorPad = () => {
       {/* <FullScreen handle={handleFullscreen}> */}
 
       <div class="min-h-[100dvh] bg-gradient-to-b from-blue-600 to-blue-800 pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
-        {/* Botón usar simulador */}
+        {/* Botón usar Stratagem Hero */}
         <div className="absolute top-4 right-4 flex items-center gap-2">
           <button className='border-2 border-neutral-200 px-1' onClick={() => navigate("/")}>
             <i className='fa-sharp fa-solid fa-gamepad text-lg text-white'></i>
@@ -265,27 +265,27 @@ export const SimulatorPad = () => {
             <i className='fa-sharp fa-solid fa-music text-2xl text-white'></i>
 
           </button>
-          <p className="text-white mr-1">SFX List</p>
+          <p className="text-white mr-1">SFX</p>
         </div>
 
         {/* Play hellpod touches ground */}
-        <div className="absolute bottom-16 right-4 flex items-center gap-2">
-          <button className='border-2 border-neutral-200 px-1' onClick={() => playHellpodSfx()}>
+        <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] right-4 flex items-center gap-2" onClick={() => playHellpodSfx()}>
+          <button className='border-2 border-neutral-200 px-1'>
 
-            <i className='fa-sharp fa-solid fa-explosion text-2xl text-white'></i>
+            <i className='fa-sharp fa-solid fa-sunset text-2xl text-white'></i>
 
           </button>
           <p className="text-white mr-1">Hellpod</p>
         </div>
 
         {/* Reset stratagem */}
-        <div className="absolute bottom-4 right-4 flex items-center gap-2" onClick={() => resetInputButton()}>
+        <div className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 flex items-center gap-2" onClick={() => resetInputButton()}>
           <button className='border-2 border-neutral-200 px-2' >
 
             <i className='fa-sharp fa-solid fa-xmark text-2xl text-white'></i>
 
           </button>
-          <p className="text-white mr-1">Reset Input</p>
+          <p className="text-white mr-1">Reset</p>
         </div>
 
         {showStratagemSidebar && (
