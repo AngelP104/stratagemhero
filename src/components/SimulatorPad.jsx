@@ -214,8 +214,9 @@ export const SimulatorPad = () => {
   return (
     <>
       {/* <FullScreen handle={handleFullscreen}> */}
-{/* Background gradient */}
-      <div class="min-h-[100dvh] bg-gradient-to-b from-[#2d4288] via-[#4471b6] to-[#233763] pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] ">
+      {/* DIVS DE FONDO */}
+      {/* Background gradient */}
+      <div className="relative min-h-[100dvh] bg-gradient-to-b from-[#2d4288] via-[#4471b6] to-[#233763] pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] ">
         {/* Center circle */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(120,200,255,0.25),transparent_70%)] pointer-events-none"></div>
         {/* Grid */}
@@ -239,6 +240,9 @@ export const SimulatorPad = () => {
         <div className="absolute top-2 right-2 w-10 h-10 border-r-2 border-t-2 border-cyan-300/40"></div>
         <div className="absolute bottom-2 left-2 w-10 h-10 border-l-2 border-b-2 border-cyan-300/40"></div>
         <div className="absolute bottom-2 right-2 w-10 h-10 border-r-2 border-b-2 border-cyan-300/40"></div>
+
+        {/* CONTENIDO */}
+        <div className="relative z-10 flex items-center justify-center min-h-[100dvh]">
 
         {/* Botón usar Stratagem Hero */}
         <div className="absolute top-4 right-4 flex items-center gap-2">
@@ -404,8 +408,8 @@ export const SimulatorPad = () => {
           />
         )}
 
+        </div>
       </div>
-      {/* </FullScreen > */}
     </>
   )
 }
