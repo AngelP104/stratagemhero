@@ -23,7 +23,7 @@ import sfxOrbitalGasStrike from '../sounds/sfxOrbitalGasStrike.mp3';
 import sfxOrbitalLaser from '../sounds/sfxOrbitalLaser.mp3';
 import sfxOrbitalRailcannonStrike from '../sounds/sfxOrbitalRailcannonStrike.mp3';
 import hellpodGround from '../sounds/hellpodGround.ogg';
-
+import stratagemBallGround from '../sounds/stratagemBallGround.ogg';
 
 export const SimulatorPad = () => {
 
@@ -39,6 +39,7 @@ export const SimulatorPad = () => {
   const [playInputDone] = useSound(inputDone, { preload: true });
   const [playInputCancel] = useSound(inputCancel, { preload: true });
   const [playHellpodGround] = useSound(hellpodGround, { preload: true });
+  const [playStratagemBallGround] = useSound(stratagemBallGround, { preload: true });
 
   //Stratagem sounds
   const [playSfx500kg] = useSound(sfx500kg, { preload: true });
@@ -164,7 +165,7 @@ export const SimulatorPad = () => {
   //Al lanzar una estratagema se reproduce un SFX (si tiene)
   const stratagemSfxPlayer = (code) => {
 
-    playInputCancel();
+    playStratagemBallGround();
     setButtonInput("");
     setMatchedStratagem("");
 
@@ -213,8 +214,32 @@ export const SimulatorPad = () => {
   return (
     <>
       {/* <FullScreen handle={handleFullscreen}> */}
+{/* Background gradient */}
+      <div class="min-h-[100dvh] bg-gradient-to-b from-[#2d4288] via-[#4471b6] to-[#233763] pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] ">
+        {/* Center circle */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(120,200,255,0.25),transparent_70%)] pointer-events-none"></div>
+        {/* Grid */}
+        <div className="absolute inset-0 
+  bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),
+       linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)]
+  bg-[size:40px_40px]
+  opacity-30
+  pointer-events-none">
+        </div>
+        <div className="absolute inset-0 
+  bg-[linear-gradient(rgba(0,0,0,0.15)_1px,transparent_1px)]
+  bg-[size:100%_3px]
+  opacity-20
+  pointer-events-none">
+        </div>
+        {/* Border */}
+        <div className="absolute inset-2 border border-cyan-300/30"></div>
+        {/* Corners */}
+        <div className="absolute top-2 left-2 w-10 h-10 border-l-2 border-t-2 border-cyan-300/40"></div>
+        <div className="absolute top-2 right-2 w-10 h-10 border-r-2 border-t-2 border-cyan-300/40"></div>
+        <div className="absolute bottom-2 left-2 w-10 h-10 border-l-2 border-b-2 border-cyan-300/40"></div>
+        <div className="absolute bottom-2 right-2 w-10 h-10 border-r-2 border-b-2 border-cyan-300/40"></div>
 
-      <div class="min-h-[100dvh] bg-gradient-to-b from-blue-600 to-blue-800 pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
         {/* Botón usar Stratagem Hero */}
         <div className="absolute top-4 right-4 flex items-center gap-2">
           <button className='border-2 border-neutral-200 px-1' onClick={() => navigate("/")}>
@@ -299,8 +324,8 @@ export const SimulatorPad = () => {
 
         {/* ARROWS if button mode is selected (buttonsUsageMode === true) */}
         {buttonsUsageMode && !matchedStratagem ?
-          <>
-            <div className="flex flex-col min-h-screen w-full justify-center items-center text-7xl text-white">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="flex flex-col items-center text-7xl text-white pointer-events-auto">
               {/* UP */}
               <div className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400 focus:outline-none focus:ring-0 active:outline-none
 " onClick={() => handleButtonPress("w")}>
@@ -335,9 +360,9 @@ export const SimulatorPad = () => {
                 </div>
               </div>
             </div>
-          </> : <>
+          </div> : <div>
 
-          </>}
+          </div>}
 
         {/* Arrows selected until the next stratagem pops up */}
         {buttonInput !== "" && (
@@ -358,7 +383,7 @@ export const SimulatorPad = () => {
         {matchedStratagem && (
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-               bg-black/70 p-4 rounded-lg text-white text-center z-50"
+               bg-black/70 p-3 text-white text-center z-50"
             onClick={() => stratagemSfxPlayer(buttonInput)}
           >
             <p className="text-2xl my-1">{matchedStratagem.name}</p>
