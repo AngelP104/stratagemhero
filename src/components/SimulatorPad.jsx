@@ -324,7 +324,7 @@ export const SimulatorPad = () => {
 
         {/* ARROWS if button mode is selected (buttonsUsageMode === true) */}
         {buttonsUsageMode && !matchedStratagem ?
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none min-h-screen">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none min-h-[100dvh]">
             <div className="flex flex-col items-center text-7xl text-white pointer-events-auto">
               {/* UP */}
               <div className="border-2 border-white/30 active:border-yellow-400 active:text-yellow-400 focus:outline-none focus:ring-0 active:outline-none
